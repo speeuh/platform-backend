@@ -10,6 +10,7 @@ import com.projetinho.backend.dtos.product.ProductUpdateDTO;
 import com.projetinho.backend.models.product.Product;
 import com.projetinho.backend.repositories.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Service
 public class ProductService {
@@ -27,7 +29,8 @@ public class ProductService {
     @Autowired
     private AmazonS3 amazonS3;
 
-    private static final String BUCKET = "learning-aws-lcsvieira";
+    @Value("${project.aws.accessKey}")
+    private String BUCKET;
 
     public ProductDTO createProduct(ProductCreationDTO productCreationDTO, String path) {
         Product product = productCreationDTO.convertCreationDtoToEntity();

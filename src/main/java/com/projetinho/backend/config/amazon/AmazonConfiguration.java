@@ -4,15 +4,18 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AmazonConfiguration {
-
-    private static final String ACCESS_KEY= "AKIA3TKEO6ROVCKGUDGU";
-    private static final String SECRET_KEY= "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";
-    private static final String REGION = "us-east-1";
+    @Value("${project.aws.accessKey}")
+    private String ACCESS_KEY;
+    @Value("${project.aws.secretKey}")
+    private String SECRET_KEY;
+    @Value("${project.aws.region}")
+    private String REGION;
 
     @Bean
     public BasicAWSCredentials basicAWSCredentials() {
