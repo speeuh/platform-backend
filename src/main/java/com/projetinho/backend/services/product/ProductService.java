@@ -29,7 +29,7 @@ public class ProductService {
     @Autowired
     private AmazonS3 amazonS3;
 
-    @Value("${project.aws.accessKey}")
+    @Value("${project.aws.bucket}")
     private String BUCKET;
 
     public ProductDTO createProduct(ProductCreationDTO productCreationDTO, String path) {
