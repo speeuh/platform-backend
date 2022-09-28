@@ -6,6 +6,7 @@ import com.projetinho.backend.config.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -24,6 +25,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         // jsr250Enabled = true,
         prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final String ROLE_ADMIN = "ADMIN";
+    private static final String ROLE_MODERATOR = "MODERATOR";
+    private static final String ROLE_USER = "USER";
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -56,8 +61,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().authorizeRequests()
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/products").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/products/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/products").hasAnyRole(ROLE_ADMIN, ROLE_MODERATOR)
+                .antMatchers(HttpMethod.PATCH, "/api/products/*").hasAnyRole(ROLE_ADMIN, ROLE_MODERATOR)
+                .antMatchers(HttpMethod.DELETE, "/api/products/*").hasAnyRole(ROLE_ADMIN, ROLE_MODERATOR)
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
